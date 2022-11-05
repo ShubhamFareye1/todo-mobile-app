@@ -2,7 +2,7 @@ import React from 'react'
 import { SafeAreaView, StyleSheet, TextInput ,  TouchableOpacity ,Text} from "react-native";
 
 
-function loginForm(props) {
+function LoginForm({ navigation },props) {
     const [text1, onChangeText1] = React.useState(null);
     const [text2, onChangeText2] = React.useState(null);
     const [text3, onChangeText3] = React.useState(null);
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
       },
   });
 
-export default loginForm
+export default LoginForm
