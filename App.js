@@ -1,10 +1,10 @@
 import React ,{useState} from 'react'
 import { View } from 'react-native'
-import LoginForm from './components/LoginForm'
-import Home from './components/Home'
-import SignUpForm from './components/SignUp'
-import User from './components/UserItem'
-import TodoForm from './components/AddTodo'
+import LoginForm from './src/Components/LoginForm'
+import Home from './src/Components/Home'
+import SignUpForm from './src/Components/SignUp'
+import User from './src/Components/UserItem'
+import TodoForm from './src/Components/AddTodo'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
