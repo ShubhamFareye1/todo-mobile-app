@@ -5,6 +5,7 @@ import Home from './src/Components/Home'
 import SignUpForm from './src/Components/SignUp'
 import User from './src/Components/UserItem'
 import TodoForm from './src/Components/AddTodo'
+import AddTodo from './src/Components/AddTodo'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,32 +13,9 @@ const Stack = createNativeStackNavigator();
 
 
 function App(){
-  AsyncStorage.setItem('  todos', JSON.stringify([
-    {
-      user: 'Shubham',
-      title: 'React native day 1',
-      status: 'work done',
-    },
-    {
-      title: 'React native day 2',
-      status: 'work done',
-    },
-    {
-      title: 'React native day 3',
-      status: 'work done',
-    },
-    {
-      title: 'React native day 4',
-      status: 'work done',
-    },
-    {
-      title: 'React native day 5',
-      status: 'work done',
-    }
-  ]));
+ 
   return (
     <NavigationContainer>
-    <View style={{ flex:1 ,backgroundColor:'grey'}}>
       
     <Stack.Navigator>
       <Stack.Screen
@@ -64,12 +42,16 @@ function App(){
          name="SignUp"
          component={SignUpForm}
       />
+      <Stack.Screen
+         name="AddTodo"
+         component={AddTodo}
+      />
       {/* {isLogin?
         <LoginForm loginForm = {isLogin} setLoginForm = {setIsLogin} login={login} setLogin={setLogin}/>:
         <LogoutForm loginForm = {isLogin} setLoginForm = {setIsLogin} />
       } */}
     </Stack.Navigator>
-   </View>
+   {/* </View> */}
    </NavigationContainer>
   )
 }

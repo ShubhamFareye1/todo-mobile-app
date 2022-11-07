@@ -1,39 +1,44 @@
 import React , {useState} from 'react'
 import { SafeAreaView, StyleSheet, TextInput ,  TouchableOpacity ,Text} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { saveObject } from '../Database/realm';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { style } from '../css/style';
 
-function AddTodo(props) {
+//import Realm from '../Database/Realm'
+
+function AddTodo({navigation}) {
     const [title, onChangeTitle] = useState('');
     const [body, onChangeBody] = useState('');
-    const [status, onChangeStatus] = useState('');
+    const [date , setDate] = useState("");
+    const [todoStatus, setTodoStatus] = useState("");
+    const [TodoType, setTodoType] = useState(true);
+    const [showDatePicker,setShowDatePicker] = useState(false);
+    //const [status, onChangeStatus] = useState('');
 
-    const onPressAddTodo = async() =>{
-        if(title==='' && body==='' && status===''){
+    const onPressAddTodo = () =>{
+        if(title==='' && body===''){
             alert('empty user and password');
         }
         else{
-            // props.appendTodo({title:title,body:title,status:status});
-            // console.log(props);
-            // 
-            const data = await AsyncStorage.getItem('todos');
-            const todos = JSON.parse(data);
-            todos.push({
-              title: title,
-              type: todoType,
-              status:status
-            });
-            await AsyncStorage.setItem('todos', JSON.stringify(todos));
-            console.log(todos);
-            props.setAddTodo(false);
+            saveObject('todo',{
+              title:title,
+              body:body,
+            })
+         //   props.setAddTodo(false);
+         navigation.navigate('User');
         }
     }
     const changeTodoState = () =>{
         console.log('props',props);
         props.setAddTodo(false);
     }
+    const setDatePickerTrue = () =>{
+      setShowDatePicker(true);
+    }
     
   return (
-    <SafeAreaView style={{backgroundColor:'white', borderTopRightRadius: 20, borderTopLeftRadius: 20}}>
+    <SafeAreaView style={{backgroundColor:'white', borderTopRightRadius: 20, borderTopLeftRadius: 20,zIndex:10}}>
         <Text
           style={{
             textAlign:'center',
@@ -63,14 +68,23 @@ function AddTodo(props) {
           placeholder="Body"
           keyboardType="default"
         />
-         {/* <TextInput
-          style={styles.input}
-          onChangeText={onChangeStatus}
-          value={status}
-          placeholderTextColor='gray'
-          placeholder="Status"
-          keyboardType="default"
-        /> */}
+        
+        <TouchableOpacity style ={styles.button} onPress= {setDatePickerTrue}>
+            <Text style = {{color:'white',fontWeight:'bold',fontSize:15}}>Select Date</Text>
+        </TouchableOpacity>
+
+        {showDatePicker && 
+        <Text>Hello Called</Text>
+        // <DateTimePicker
+        //   testID="dateTimePicker"
+        //   value={new Date()}
+        //   is24Hour={true}
+        //   minimumDate={new Date()}
+        //   onChange = { (event, selectedDate) => {setDate(selectedDate); setShowDatePicker(false);}}
+        // />
+        }
+
+         <Text>Selected Date: {date.toLocaleString()}</Text> 
         <TouchableOpacity
             style={styles.button}
             onPress={onPressAddTodo}
@@ -108,4 +122,4 @@ const styles = StyleSheet.create({
       },
   });
 
-export default AddTodo
+export default AddTodo;

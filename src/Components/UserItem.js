@@ -1,113 +1,77 @@
-import React from 'react';
-import {Text, View, ScrollView} from 'react-native';
-import Item from './Item';
-import AddTodo from './AddTodo';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState} from 'react';
 import { NavigationContainer, useIsFocused} from '@react-navigation/native';
+import {StatusBar,
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image} from 'react-native';
+import Item from './Item';
+// import AddTodo from './AddTodo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {deleteObject, fetchObject} from '../Database/realm';
+import {style} from '../css/style';
 
-
-function UserItem() {
-
-  const [todos,setTodos] = React.useState([]);
+function UserItem({navigation}) {
   const [addTodo, setAddTodo] = React.useState(false);
-  const [todoList,setTodoList] = React.useState([]);
-  
-  const userDetails = userMail => {
-    fetch(`http://172.16.33.228:8080/user?username=${userMail}`)
-      .then(response => response.json())
-      .then(json => {
-        console.log(json);
-        AsyncStorage.setItem('userDetails', JSON.stringify(json));
-        printData();
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
+  const [todoList, setTodoList] = React.useState([]);
+  const [isSelected, setIsSelected] = useState("ToDo");
+  const [todoUpdate,setTodoUpdate] = useState(1);
 
-  const usermail = async () => {
-    const value = await AsyncStorage.getItem('user');
-    const userMail = JSON.parse(value);
-    console.log(userMail);
-    userDetails(userMail);
-    // await AsyncStorage.setItem('userDetails',userData);
-    // printData();
-  };
-
-  const printData = async () => {
-    const value = await AsyncStorage.getItem('userDetails');
-    console.log(JSON.stringify(value));
-  };
-
-  // const getTodo = async() =>{
-  //   const value = await AsyncStorage.getItem('todos');
-  //   let todo = JSON.parse(value);
-  //   console.log(JSON.stringify(todo));
-  //   todos.push('todo data',JSON.stringify(todo));
-  // }
-
-  const deleteTask = async task => {
-    console.log('props key',task);
-    for(let i=0;i<todoList.length;i++){
-        if(task===todoList[i].title){
-          //setTodos(todos.remove(i));
-          var filtered = todoList.filter(function(value, index, arr){ 
-            return index !== i;
-          });
-          setTodoList(filtered);
-          await AsyncStorage.setItem('todos',JSON.stringify(todoList));
-          break;
-        }
-        console.log(todoList);
-    }
-
-  };
-
-  React.useEffect(()=>{
-      const fetchData = async() =>{
-      const data = await AsyncStorage.getItem('todos');
-      console.log("%^%^%^%%^",data);
-      const todo = JSON.parse(data);
-      console.log("88888888888888888",data);
-      setTodoList(todo);
+  const deleteTask = task => {
+    for (let i = 0; i < todoList.length; i++) {
+      if (task === todoList[i].title) {
+        deleteObject(todoList[i]);
+        console.log('data deleted', todoList[i]);
+        setTodoUpdate(todoUpdate+1);
+        break;
       }
+    }
+    console.log('props key', task);
+  };
+
+  React.useEffect(() => {
+    const fetchData = () => {
+      setTodoList(fetchObject('todo'));
+    };
     fetchData();
-  },[useIsFocused()])
+  }, [useIsFocused],setTodoUpdate,useIsFocused);
 
   return (
-    <ScrollView style={{flex: 1}}>
-      {addTodo ? (
-        <AddTodo
-          addTodo={addTodo}
-          setAddTodo={setAddTodo}
-        />
-      ) : (
-        <View>
-          <Text
-            style={{
-              fontSize: 25,
-              fontWeight: 'bold',
-              marginLeft: 25,
-              marginBottom: 25,
-              marginTop: 15,
-            }}>
-            Hello, 
-            {/* {todos[0].user}{''} */}
-            {/* {console.log('hello shubham',(AsyncStorage.getItem('user')))} */}
-            {AsyncStorage.getItem('user').userMail}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Text
-              onPress={() => setAddTodo(true)}
-              style={{fontSize: 30, fontWeight: 'bold', margin: 20}}>
-              +
+    <View style={style.container}>
+      <View style={{flex: 1, backgroundColor: '#000080'}}>
+        {addTodo ? (
+          // <AddTodo addTodo={addTodo} setAddTodo={setAddTodo} />
+          navigation.navigate('AddTodo')
+        ) : (
+          <View style={{flexDirection: 'row'}}>
+            <Text style={style.ListHeader}>
+              Hello, Shubham
             </Text>
-          </Text>
-          {todoList.map((data) => (
-            <Item task={data.title} deleteTask={deleteTask} />
-          ))}
+          </View>
+        )}
+      </View>
+      {!addTodo && (
+        <View style={style.ListContainer}>
+          <View  elevation = {5} style={style.show}>
+            <Text style={{color:(isSelected=="ToDo"?"#000080":"black") ,fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("ToDo")} >ToDo</Text> 
+            <Text style={{color:(isSelected=="Doing"?"#000080":"black"),fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("Doing")}>Doing</Text> 
+            <Text style={{color:(isSelected=="Done"?"#000080":"black"),fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("Done")}>Done</Text>
+          </View>
+          <ScrollView style={{marginTop: 20}}>
+            {todoList &&
+              todoList.map((data, id) => (
+                <Item key={id} task={data.title} deleteTask={deleteTask} />
+              ))}
+          </ScrollView>
+          <TouchableOpacity style = {style.AddUserButton} onPress = {() => navigation.navigate('AddTodo')}>
+             <Image source={require('/home/shubham/Documents/todo_mobile_app/src/static/addIcon.png')} />
+         </TouchableOpacity>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 }
 

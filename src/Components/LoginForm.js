@@ -7,19 +7,13 @@ import {
   Text,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const user = [
-  {
-    email: 'shubh@gmail.com',
-    password: '@Far123',
-  },
-];
+import { deleteAll, deleteAllvalue } from '../Database/realm';
 
 function LoginForm({navigation}, props) {
-  const [email, setEmail] = useState('');
+  const [email,setEmail] = useState();
   const [password, setPassword] = useState('');
-  const [borderColorEmail, setBorderColorEmail] = useState('');
-  const [borderColorPassword, setBorderColorPassword] = useState('');
+  const [emailValidationColor, setEmailValidationColor] = useState('');
+  const [passwordValidationColor, setPasswordValidationColor] = useState('');
 
   const onChangeEmail = email => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -33,44 +27,46 @@ function LoginForm({navigation}, props) {
   };
 
   useEffect(() => {
-    if (onChangeEmail(email)) {
-      setBorderColorEmail('green');
-    } else {
-      setBorderColorEmail('red');
-    }
-    console.log('onchange');
-  }, [email]);
-
-  useEffect(() => {
     if (onChangePassword(password)) {
-      setBorderColorPassword('green');
+      setPasswordValidationColor('green');
     } else {
-      setBorderColorPassword('red');
+      setPasswordValidationColor('red');
     }
     console.log('onchange');
   }, [password]);
 
-  const addUserDetail = async() =>{
-    //await AsyncStorage.setItem('user', JSON.stringify(email));
-    fetch('http://172.16.33.228:8080/todo/list')
+  useEffect(() => {
+    if (onChangeEmail(email)) {
+      setEmailValidationColor('green');
+    } else {
+      setEmailValidationColor('red');
+    }
+    console.log('onchange',email);
+  }, [email]);
+
+  const addUserDetail = async(userMail) =>{
+    // fetch('http://172.16.33.228:8080/todo/list')  // FarEye IP
+    fetch(`http://192.168.1.57:8080/user?username=${userMail}`)      // Hostel IP
       .then(response => response.json())
-      .then(async (json) => {
-        console.log('todo',json);
-        await AsyncStorage.setItem('todos',JSON.stringify(json));
+      .then(async json => {
+        console.log(json);
+        await AsyncStorage.setItem('userDetails', JSON.stringify(json));
       })
       .catch(error => {
         console.error(error);
       });
-
   }
 
-  const addNewTodo = async() => {
+  const userLogin = async() => {
     if (email === '' && password === '') {
       alert('Empty Email & password');
     } else {
-      console.log('hello');
+      
+      const data = await AsyncStorage.getItem('userDetails');
+      console.log('user data',JSON.parse(data));
       fetch(
-        'http://172.16.33.228:8080/api/login?username=' +
+        // 'http://172.16.33.228:8080/api/login?username=' +   // Fareye IP
+        'http://192.168.1.57:8080/api/login?username=' +       // Hostel IP
           encodeURIComponent(email) +
           '&password=' +
           encodeURIComponent(password),
@@ -82,8 +78,8 @@ function LoginForm({navigation}, props) {
           console.log(res.status);
           console.log(res.status === 200);
           if (res.status === 200) {
-            //AsyncStorage.setItem('userMail', email);
-            addUserDetail();
+            console.log('data called');
+            addUserDetail(email);
             navigation.navigate('User');
           } else {
             alert('Invalid Credentials');
@@ -92,7 +88,7 @@ function LoginForm({navigation}, props) {
         .catch(error => {
           console.error(error);
         });
-    }
+   }
   };
 
   return (
@@ -111,13 +107,13 @@ function LoginForm({navigation}, props) {
           color: 'black',
           fontWeight: 'bold',
         }}>
-        Log In
+        Log In                        
       </Text>
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
         value={email}
-        borderBottomColor={borderColorEmail}
+        borderBottomColor={emailValidationColor}
         placeholderTextColor="gray"
         placeholder="Your email Id"
         keyboardType="email-address"
@@ -126,12 +122,12 @@ function LoginForm({navigation}, props) {
         style={styles.input}
         onChangeText={setPassword}
         value={password}
-        borderBottomColor={borderColorPassword}
+        borderBottomColor={passwordValidationColor}
         placeholderTextColor="gray"
         placeholder="Password"
         keyboardType="default"
       />
-      <TouchableOpacity style={styles.button} onPress={addNewTodo}>
+      <TouchableOpacity style={styles.button} onPress={userLogin}>
         <Text style={{color: 'white', fontWeight: 'bold', fontSize: 15}}>
           Log-In
         </Text>
@@ -148,7 +144,8 @@ function LoginForm({navigation}, props) {
           style={{fontWeight: 'bold'}}
           onPress={() => {
             console.log(props.loginForm);
-            props.setLoginForm(props.loginForm ? false : true);
+          //  props.setLoginForm(props.loginForm ? false : true);
+           deleteAllvalue();
           }}>
           Sign-up
         </Text>

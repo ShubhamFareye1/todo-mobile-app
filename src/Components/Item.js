@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 const Item = props => {
   return (
     <View style={styles.container}>
-      <View style={styles.taskContainer} key={props.key}>
+      <View style={styles.taskContainer}>
         <Text style={styles.task}>{props.task}</Text>
         <Text
           style={{
@@ -15,7 +15,7 @@ const Item = props => {
             marginRight: 10,
           }}
           onPress={()=>props.deleteTask(props.task)} 
-          key={props.task}
+          // key={props.task}
           >
           {'  '}
           X{'  '}
