@@ -4,7 +4,7 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 const Item = props => {
   return (
     <View style={styles.container}>
-      <View style={styles.taskContainer} key={props.task}>
+      <View style={styles.taskContainer} key={props.key}>
         <Text style={styles.task}>{props.task}</Text>
         <Text
           style={{
@@ -14,10 +14,11 @@ const Item = props => {
             fontSize: 20,
             marginRight: 10,
           }}
-          onPress={()=>props.deleteTask(console.log('delete item'))}
+          onPress={()=>props.deleteTask(props.task)} 
+          key={props.task}
           >
-          {' '}
-          X{' '}
+          {'  '}
+          X{'  '}
         </Text>
       </View>
     </View>
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   taskContainer: {
-    backgroundColor: '#3E3364',
+    backgroundColor: 'gray',
     borderRadius: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',

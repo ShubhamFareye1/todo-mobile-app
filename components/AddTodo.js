@@ -1,19 +1,29 @@
 import React , {useState} from 'react'
 import { SafeAreaView, StyleSheet, TextInput ,  TouchableOpacity ,Text} from "react-native";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function AddTodo(props) {
     const [title, onChangeTitle] = useState('');
     const [body, onChangeBody] = useState('');
     const [status, onChangeStatus] = useState('');
 
-    const onPressAddTodo = () =>{
+    const onPressAddTodo = async() =>{
         if(title==='' && body==='' && status===''){
             alert('empty user and password');
         }
         else{
-            props.appendTodo({title:title,body:title,status:status});
-            console.log(props);
+            // props.appendTodo({title:title,body:title,status:status});
+            // console.log(props);
+            // 
+            const data = await AsyncStorage.getItem('todos');
+            const todos = JSON.parse(data);
+            todos.push({
+              title: title,
+              type: todoType,
+              status:status
+            });
+            await AsyncStorage.setItem('todos', JSON.stringify(todos));
+            console.log(todos);
             props.setAddTodo(false);
         }
     }
