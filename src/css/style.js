@@ -34,6 +34,7 @@ export const style = StyleSheet.create({
         borderTopRightRadius: 15,
         padding: 10,
         backgroundColor: 'white',
+       
     },
     
       show:{  

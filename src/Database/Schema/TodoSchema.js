@@ -2,14 +2,14 @@ import Realm from "realm";
 
 // Declare Schema
 export const TodoSchema = {
-    name: 'todo',
+    name: 'todo1',
     properties: {
         id: 'int',
         title: 'string',
         body:'string',
         status: 'string',
         dueDate: 'string',
-        dueTime: 'string',
+        dueTime:'string',
     },
       primaryKey: 'id',
 };

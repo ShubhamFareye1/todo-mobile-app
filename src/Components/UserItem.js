@@ -23,6 +23,7 @@ function UserItem({navigation}) {
   const deleteTask = task => {
     for (let i = 0; i < todoList.length; i++) {
       if (task === todoList[i].title) {
+        console.log(todoList[i]);
         deleteObject(todoList[i]);
         console.log('data deleted', todoList[i]);
         setTodoUpdate(todoUpdate+1);
@@ -33,11 +34,13 @@ function UserItem({navigation}) {
   };
 
   React.useEffect(() => {
-    const fetchData = () => {
-      setTodoList(fetchObject('todo'));
+    const fetchData = async() => {
+      console.log('table data fetch');
+      console.log(await fetchObject('todo1'),'fdgycdfgchjvvfghjvgf');
+      setTodoList(await fetchObject('todo1'));
     };
     fetchData();
-  }, [useIsFocused],setTodoUpdate,useIsFocused);
+  }, [useIsFocused()],todoUpdate);
 
   return (
     <View style={style.container}>
@@ -55,10 +58,12 @@ function UserItem({navigation}) {
       </View>
       {!addTodo && (
         <View style={style.ListContainer}>
+          <View style={{ alignItems:'center',justifyContent:'center'}}>
           <View  elevation = {5} style={style.show}>
             <Text style={{color:(isSelected=="ToDo"?"#000080":"black") ,fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("ToDo")} >ToDo</Text> 
             <Text style={{color:(isSelected=="Doing"?"#000080":"black"),fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("Doing")}>Doing</Text> 
             <Text style={{color:(isSelected=="Done"?"#000080":"black"),fontWeight:'bold',fontSize:15}} onPress = {()=>setIsSelected("Done")}>Done</Text>
+          </View>
           </View>
           <ScrollView style={{marginTop: 20}}>
             {todoList &&

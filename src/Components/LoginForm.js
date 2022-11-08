@@ -45,8 +45,8 @@ function LoginForm({navigation}, props) {
   }, [email]);
 
   const addUserDetail = async(userMail) =>{
-    // fetch('http://172.16.33.228:8080/todo/list')  // FarEye IP
-    fetch(`http://192.168.1.57:8080/user?username=${userMail}`)      // Hostel IP
+     fetch('http://172.16.33.228:8080/todo/list')  // FarEye IP - 172.16.33.228
+    //fetch(`http://192.168.1.57:8080/user?username=${userMail}`)      // Hostel IP
       .then(response => response.json())
       .then(async json => {
         console.log(json);
@@ -65,11 +65,11 @@ function LoginForm({navigation}, props) {
       const data = await AsyncStorage.getItem('userDetails');
       console.log('user data',JSON.parse(data));
       fetch(
-        // 'http://172.16.33.228:8080/api/login?username=' +   // Fareye IP
-        'http://192.168.1.57:8080/api/login?username=' +       // Hostel IP
-          encodeURIComponent(email) +
+         'http://172.16.33.228:8080/api/login?username=' +   // Fareye IP
+      //  'http://192.168.1.57:8080/api/login?username=' +       // Hostel IP
+          encodeURIComponent('shubhampatidar@gmail.com') +
           '&password=' +
-          encodeURIComponent(password),
+          encodeURIComponent('@Shubh123'),
         {
           method: 'POST',
         },
@@ -144,8 +144,7 @@ function LoginForm({navigation}, props) {
           style={{fontWeight: 'bold'}}
           onPress={() => {
             console.log(props.loginForm);
-          //  props.setLoginForm(props.loginForm ? false : true);
-           deleteAllvalue();
+            props.setLoginForm(props.loginForm ? false : true);
           }}>
           Sign-up
         </Text>

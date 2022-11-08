@@ -4,15 +4,25 @@ import { TodoSchema, UserSchema } from './Schema/TodoSchema';
 
 const schema = [TodoSchema, UserSchema]
 
-const SCHEMA_VERSION=2;
+
+// let config = Realm.Configuration(
+//     schemaVersion: 0,
+//     deleteRealmIfMigrationNeeded: true
+//   )
+// Realm.Configuration.defaultConfiguration = config
+  
+//  //let realm = try! Realm()
+
+const SCHEMA_VERSION=1;
 let realm = new Realm({
     schemaVersion:SCHEMA_VERSION,
     schema: schema,
-    shouldCompactOnLaunch:() => true
+    shouldCompactOnLaunch:() => true,
+    // deleteRealmIfMigrationNeeded:() => true,
 })
 
 const idGenerator = realm => {
-    let id = realm.objects('Todo').max('id');
+    let id = realm.objects('todo1').max('id');
     console.log(id);
     if (!id) id = 0;
     return id + 1;
@@ -28,12 +38,12 @@ const idGenerator = realm => {
     }
 
 export async function saveObject(table,object){
-    console.log('new item added');
+    console.log('new item added--------------------------------------------------------------',object);
     const realm = await Realm.open({
         path: 'RealmDB',
         schema: [TodoSchema],
       });
-     
+     console.log('object data',object);
     try{
     object.id=idGenerator(realm);
     if(Array.isArray(object)){
@@ -61,7 +71,7 @@ export async function getTodosByStatus(filter) {
       path: 'RealmDB',
       schema: [TodoSchema],
     });
-    const data = realm.objects('Todo').filtered(`status=='${filter}'`);
+    const data = realm.objects('todo1').filtered(`status=='${filter}'`);
     return data;
   }
 
@@ -73,8 +83,12 @@ export async function getRealmPath() {
     return realm.path;
   }
 
-export function fetchObject(table){
-    console.log('fetch is vcalledf');
+export async function fetchObject(table){
+    const realm = await Realm.open({
+        path: 'RealmDB',
+        schema: [TodoSchema],
+      });
+    console.log('fetch is vcalledf',table);
     let results = realm.objects(table);
     // if(query){
     //     results=results.filtereded(query);
@@ -82,8 +96,9 @@ export function fetchObject(table){
     // if(sortBy){
     //     results=results.sorted(sortBy);
     // }
-    console.log(results);
+    console.log('results',results);
     return results;
+    
 }
 
 

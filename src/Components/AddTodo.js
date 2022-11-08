@@ -21,9 +21,13 @@ function AddTodo({navigation}) {
             alert('empty user and password');
         }
         else{
-            saveObject('todo',{
+            saveObject('todo1',{
               title:title,
               body:body,
+              dueDate:date,
+              status:"Doing",
+              dueTime:'',
+              
             })
          //   props.setAddTodo(false);
          navigation.navigate('User');
@@ -74,17 +78,17 @@ function AddTodo({navigation}) {
         </TouchableOpacity>
 
         {showDatePicker && 
-        <Text>Hello Called</Text>
-        // <DateTimePicker
-        //   testID="dateTimePicker"
-        //   value={new Date()}
-        //   is24Hour={true}
-        //   minimumDate={new Date()}
-        //   onChange = { (event, selectedDate) => {setDate(selectedDate); setShowDatePicker(false);}}
-        // />
+       // <Text>Hello Called</Text>
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={new Date()}
+          is24Hour={true}
+          minimumDate={new Date()}
+          onChange = { (event, selectedDate) => {setDate(selectedDate.toLocaleString()); setShowDatePicker(false);}}
+        />
         }
 
-         <Text>Selected Date: {date.toLocaleString()}</Text> 
+         <Text style={{textAlign:'center'}}>Selected Date: {date}</Text> 
         <TouchableOpacity
             style={styles.button}
             onPress={onPressAddTodo}
