@@ -39,16 +39,13 @@ export const style = StyleSheet.create({
     
       show:{  
         flexDirection:"row",
-        color:'yellow',
         justifyContent:'space-evenly',
-        width: "90%",
+        width: "95%",
         height:60,
-        padding:20,
+        alignItems:'center',
         borderRadius:10,
         backgroundColor: "white",
-        shadowColor:'gray',
         marginTop:-30,
-        shadowColor: '#000000',
       },
       showText:{
         fontWeight:'bold',
@@ -57,9 +54,8 @@ export const style = StyleSheet.create({
       },
       AddUserButton:{
         flexDirection: "row",
+        alignSelf:'center',
         alignContent: "flex-end",
-        marginBottom:20,
-        marginTop:10,
         justifyContent:"center"
     },
       

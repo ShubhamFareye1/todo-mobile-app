@@ -34,7 +34,7 @@ function AddTodo({navigation}) {
         }
     }
     const changeTodoState = () =>{
-        console.log('props',props);
+       // console.log('props',props);
         props.setAddTodo(false);
     }
     const setDatePickerTrue = () =>{

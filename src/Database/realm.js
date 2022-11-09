@@ -42,28 +42,38 @@ export async function saveObject(table,object){
     const realm = await Realm.open({
         path: 'RealmDB',
         schema: [TodoSchema],
-      });
-     console.log('object data',object);
+    });
+    //console.log('object data',object);
     try{
-    object.id=idGenerator(realm);
-    if(Array.isArray(object)){
-        realm.write(()=>object.forEach(data =>realm.write(table,data,true)));
-    }
-    else{
+        object.id=idGenerator(realm);
         realm.write(()=>realm.create(table,object,true));
-    }
    } catch(err){
     console.log(err);
    }
 }
 
-export function deleteObject(object){
-    console.log('delete is called' , object);
-    if(Array.isArray(object)){
-        realm.write(()=>object.forEach(forEach(realmObj => realm.delete(realmObj))));
-    }else{
-        realm.write(()=>realm.delete(object));
-    }
+export async function updateObject(todoId){
+  const realm = await Realm.open({
+    path: 'RealmDB',
+    schema: [TodoSchema],
+  });
+  realm.write(() => {
+    const todoData = realm.objects('todo1').filtered(`id=${todoId}`);
+    todoData[0].status = "Done";
+  });
+
+}
+
+export async function deleteObject(object){
+  const realm = await Realm.open({
+    path: 'RealmDB',
+    schema: [TodoSchema],
+  });
+  try{
+    const obj=realm.objects('todo1').filter(obj=>obj.id==object.id);
+        await realm.write(async ()=>realm.delete(obj));
+    
+  }catch(e){console.log(e,'error')}
 }
 
 export async function getTodosByStatus(filter) {
@@ -90,12 +100,6 @@ export async function fetchObject(table){
       });
     console.log('fetch is vcalledf',table);
     let results = realm.objects(table);
-    // if(query){
-    //     results=results.filtereded(query);
-    // }
-    // if(sortBy){
-    //     results=results.sorted(sortBy);
-    // }
     console.log('results',results);
     return results;
     
@@ -103,3 +107,4 @@ export async function fetchObject(table){
 
 
 export default Realm
+
