@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Item from './Item';
 // import AddTodo from './AddTodo';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   deleteObject,
   fetchObject,
@@ -26,9 +26,9 @@ function UserItem({navigation}) {
   const [todoUpdate, setTodoUpdate] = useState(1);
 
   const deleteTask = async task => {
-    console.log(task, 'something is here');
+   // console.log(task, 'delete task called');
     for (let i = 0; i < todoList.length; i++) {
-      if (task === todoList[i].title) {
+      if (task.id === todoList[i].id) {
         console.log('delete task', todoList[i]);
         await deleteObject(todoList[i]);
         console.log('data deleted', todoList[i]);
@@ -42,7 +42,7 @@ function UserItem({navigation}) {
   const updateStatus = async task => {
     console.log('update is called-----------------------------------');
     for (let i = 0; i < todoList.length; i++) {
-      if (task === todoList[i].title) {
+      if (task.id === todoList[i].id) {
         await updateObject(todoList[i].id);
         setTodoUpdate(todoUpdate + 1);
         break;
@@ -52,7 +52,7 @@ function UserItem({navigation}) {
 
   React.useEffect(() => {
     const fetchData = async () => {
-      if (isSelected === 'ToDo') setTodoList(await fetchObject('todo1'));
+      if (isSelected === 'ToDo') setTodoList(await fetchObject('todo'));
       else setTodoList(await getTodosByStatus(isSelected));
     };
     fetchData();
@@ -61,7 +61,7 @@ function UserItem({navigation}) {
   React.useEffect(() => {
     const fetchData = async () => {
       console.log('table data fetch');
-      if(isSelected==='ToDo') setTodoList(await fetchObject('todo1'));
+      if(isSelected==='ToDo') setTodoList(await fetchObject('todo'));
       else setTodoList(await getTodosByStatus(isSelected)); 
     };
     fetchData();
@@ -112,7 +112,7 @@ function UserItem({navigation}) {
           renderItem={data => (
             <Item
               key={data.id}
-              task={data.item.title}
+              task={data.item}
               deleteTask={deleteTask}
               updateStatus={updateStatus}
             />

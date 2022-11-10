@@ -18,24 +18,26 @@ let realm = new Realm({
     schemaVersion:SCHEMA_VERSION,
     schema: schema,
     shouldCompactOnLaunch:() => true,
-    // deleteRealmIfMigrationNeeded:() => true,
 })
 
+// const realm = Realm.open({ schema: [TodoSchema], deleteRealmIfMigrationNeeded: true, })
+
 const idGenerator = realm => {
-    let id = realm.objects('todo1').max('id');
+    let id = realm.objects('todo').max('id');
     console.log(id);
     if (!id) id = 0;
     return id + 1;
   };
 
 
-  export function deleteAllvalue(){
-    realm.write(() => {
-        // Delete all objects from the realm.
-        console.log('delete');
-        realm.deleteAll();
-      });
-    }
+const idGeneratorUser = ({table,realm}) => {
+    let id = realm.objects(table).max('id');
+    console.log(id);
+    if (!id) id = 0;
+    return id + 1;
+};  
+
+
 
 export async function saveObject(table,object){
     console.log('new item added--------------------------------------------------------------',object);
@@ -43,7 +45,6 @@ export async function saveObject(table,object){
         path: 'RealmDB',
         schema: [TodoSchema],
     });
-    //console.log('object data',object);
     try{
         object.id=idGenerator(realm);
         realm.write(()=>realm.create(table,object,true));
@@ -52,13 +53,28 @@ export async function saveObject(table,object){
    }
 }
 
+
+export async function saveUserObject(table,object){
+  console.log('new item added--------------------------------------------------------------',object);
+  const realm = await Realm.open({
+      path: 'RealmDB',
+      schema: [UserSchema],
+  });
+  try{
+      object.id=idGeneratorUser({table,realm});
+      realm.write(()=>realm.create(table,object,true));
+ } catch(err){
+  console.log(err);
+ }
+}
+
 export async function updateObject(todoId){
   const realm = await Realm.open({
     path: 'RealmDB',
     schema: [TodoSchema],
   });
   realm.write(() => {
-    const todoData = realm.objects('todo1').filtered(`id=${todoId}`);
+    const todoData = realm.objects('todo').filtered(`id=${todoId}`);
     todoData[0].status = "Done";
   });
 
@@ -70,7 +86,7 @@ export async function deleteObject(object){
     schema: [TodoSchema],
   });
   try{
-    const obj=realm.objects('todo1').filter(obj=>obj.id==object.id);
+    const obj=realm.objects('todo').filter(obj=>obj.id==object.id);
         await realm.write(async ()=>realm.delete(obj));
     
   }catch(e){console.log(e,'error')}
@@ -81,7 +97,7 @@ export async function getTodosByStatus(filter) {
       path: 'RealmDB',
       schema: [TodoSchema],
     });
-    const data = realm.objects('todo1').filtered(`status=='${filter}'`);
+    const data = realm.objects('todo').filtered(`status=='${filter}'`);
     return data;
   }
 

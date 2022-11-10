@@ -6,11 +6,10 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { deleteAll, deleteAllvalue } from '../Database/realm';
+import {login,addUserDetail} from '../api/LoginApi'
 
 function LoginForm({navigation}, props) {
-  const [email,setEmail] = useState();
+  const [email,setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailValidationColor, setEmailValidationColor] = useState('');
   const [passwordValidationColor, setPasswordValidationColor] = useState('');
@@ -44,55 +43,17 @@ function LoginForm({navigation}, props) {
     console.log('onchange',email);
   }, [email]);
 
-  const addUserDetail = async(userMail) =>{
-     fetch('http://172.16.33.228:8080/todo/list')  // FarEye IP - 172.16.33.228
-    //fetch(`http://192.168.1.57:8080/user?username=${userMail}`)      // Hostel IP
-      .then(response => response.json())
-      .then(async json => {
-        console.log(json);
-        await AsyncStorage.setItem('userDetails', JSON.stringify(json));
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-
   const userLogin = async() => {
-   // if (email === '' && password === '') {
-    addUserDetail(email);
-            navigation.navigate('User');
-            return;
-    if(false){
+    console.log('Email - Password',email,password);
+    if (email === '' && password === '') { 
       alert('Empty Email & password');
     } else {
-      
-      const data = await AsyncStorage.getItem('userDetails');
-      console.log('user data',JSON.parse(data));
-      fetch(
-         'http://172.16.33.228:8080/api/login?username=' +   // Fareye IP
-      //  'http://192.168.1.57:8080/api/login?username=' +       // Hostel IP
-          encodeURIComponent('shubhampatidar@gmail.com') +
-          '&password=' +
-          encodeURIComponent('@Shubh123'),
-        {
-          method: 'POST',
-        },
-      )
-        .then(res => {
-          console.log(res.status);
-          console.log(res.status === 200);
-        //  if (res.status === 200) {
-          if(true){
-            console.log('data called');
-            addUserDetail(email);
-            navigation.navigate('User');
-          } else {
-            alert('Invalid Credentials');
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
+       const loginStatus =await login({email,password});
+       console.log('res = ' ,loginStatus);
+       if(loginStatus==200){
+        addUserDetail();
+        navigation.navigate('User');      
+       }
    }
   };
 

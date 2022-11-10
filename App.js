@@ -17,7 +17,9 @@ function App(){
   return (
     <NavigationContainer>
       
-    <Stack.Navigator>
+    <Stack.Navigator 
+    screenOptions={{headerShown:false}}
+    >
       <Stack.Screen
          name="LoginForm"
          component={LoginForm} 
@@ -30,7 +32,7 @@ function App(){
         <Stack.Screen
           name="User"
           component={User}
-          options={{ title: 'Welcome' }}
+          //options={{ title: 'Welcome' }}
         />
       {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
       <Stack.Screen
